@@ -49,6 +49,7 @@ void	free_fd(t_px *px)
 	i = 0;
 	while (i < px->cmd_number - 1)
 	{
+		//fprintf(stderr, "freefd  i: %i. cmd num: %i", i, px->cmd_number);
 		free(px->fd[i]);
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: imontero <imontero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/06 15:39:27 by imontero          #+#    #+#             */
-/*   Updated: 2023/09/08 13:35:22 by imontero         ###   ########.fr       */
+/*   Updated: 2023/09/11 20:06:34 by imontero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,28 @@
 void	first_child_cmd(t_px *px, char **argv, char **env)
 {
 	get_env_path(env, px);
-	px->fd_in = open(argv[1], O_RDONLY);
+	if (px->flag_here_doc == 1)
+		px->fd_in = open(".tmp", O_RDONLY);
+	else if (px->flag_here_doc == 0)
+		px->fd_in = open(argv[1], O_RDONLY);
 	if (dup2(px->fd[0][1], STDOUT_FILENO) < 0)
-		ft_error_free_exit("dup error", NULL, px);
+		ft_error_free_exit("dup error 0", NULL, px);
 	if (dup2(px->fd_in, STDIN_FILENO) < 0)
-		ft_error_free_exit("dup error", NULL, px);
+		ft_error_free_exit("dup error 1", NULL, px);
 	close(px->fd_in);
 	ft_close(px, px->cmd_number - 1);
-	ft_execve(px, argv[2], env);
+	//fprintf(stderr, "arg exec: %s", argv[2]);
+	ft_execve(px, argv[px->first_cmd], env);
 }
 
 void	core_child_cmd(int i, t_px *px, char **argv, char **env)
 {
 	get_env_path(env, px);
+	//fprintf(stderr, "\ni: %i\n", i);
 	if (dup2(px->fd[i - 1][0], STDIN_FILENO) < 0)
-		ft_error_free_exit("dup error", NULL, px);
+		ft_error_free_exit("dup error 2", NULL, px);
 	if (dup2(px->fd[i][1], STDOUT_FILENO) < 0)
-		ft_error_free_exit("dup error", NULL, px);
+		ft_error_free_exit("dup error 3", NULL, px);
 	ft_close(px, px->cmd_number - 1);
 	ft_execve(px, argv[i + 2], env);
 }
@@ -39,11 +44,14 @@ void	core_child_cmd(int i, t_px *px, char **argv, char **env)
 void	last_child_cmd(int i, t_px *px, char **argv, char **env)
 {
 	get_env_path(env, px);
-	px->fd_out = open(argv[px->argccpy - 1], O_TRUNC | O_WRONLY, 0777);
+	if (px->flag_here_doc == 1)
+		px->fd_out = open(argv[px->argccpy - 1], O_APPEND | O_WRONLY, 0777);
+	else if (px->flag_here_doc == 0)
+		px->fd_out = open(argv[px->argccpy - 1], O_TRUNC | O_WRONLY, 0777);
 	if (dup2(px->fd[i - 1][0], STDIN_FILENO) < 0)
-		ft_error_free_exit("dup error", NULL, px);
+		ft_error_free_exit("dup error 4", NULL, px);
 	if (dup2(px->fd_out, STDOUT_FILENO) < 0)
-		ft_error_free_exit("dup error", NULL, px);
+		ft_error_free_exit("dup error 5", NULL, px);
 	close(px->fd_out);
 	ft_close(px, i);
 	ft_execve(px, argv[px->argccpy - 2], env);
@@ -55,14 +63,14 @@ void	pipex(t_px *px, char **argv, char **env)
 	int		i;
 
 	i = 0;
-	while (i + 2 < px->argccpy - 1)
+	while (i + px->first_cmd < px->argccpy - 1)
 	{
 		pid = fork();
 		if (pid == 0)
 		{
 			if (i == 0)
 				first_child_cmd(px, argv, env);
-			else if (i + 2 == px->argccpy - 2)
+			else if (i + px->first_cmd == px->argccpy - 2)
 				last_child_cmd(i, px, argv, env);
 			else
 				core_child_cmd(i, px, argv, env);
@@ -71,23 +79,31 @@ void	pipex(t_px *px, char **argv, char **env)
 		waitpid(pid, NULL, 0);
 		i++;
 	}
+	if (px->flag_here_doc == 1)
+		free(px->limit);
 	free_fd(px);
 }
 
 int	main(int argc, char **argv, char **env)
 {
 	t_px	px;
-
 	ft_bzero(&px, sizeof(struct s_px));
+	px.argccpy = argc;
 	if (argc < 5)
 		ft_error("Invalid argument number");
-	
-	
-	
-	check_files(argc, argv);
-	px.argccpy = argc;
-	px.cmd_number = argc - 3;
+	check_here_doc(argc, argv, &px);
 	ft_alloc_fd(&px);
 	pipex(&px, argv, env);
+	
+	/*if (check_here_doc(argc, argv, &px) == 1)
+	{
+		printf("here doc");
+	}
+	else if(check_here_doc(argc, argv, &px) == 0)
+	{
+		printf("pipex");		
+		ft_alloc_fd(&px);
+		pipex(&px, argv, env);
+	}*/
 	return (0);
 }

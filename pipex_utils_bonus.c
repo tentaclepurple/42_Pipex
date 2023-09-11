@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_utils.c                                      :+:      :+:    :+:   */
+/*   pipex_utils_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: imontero <imontero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/06 18:56:30 by imontero          #+#    #+#             */
-/*   Updated: 2023/09/08 11:24:14 by imontero         ###   ########.fr       */
+/*   Updated: 2023/09/11 19:20:33 by imontero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,30 @@
 /* 
 	Return 1 for here_doc and 0 for pipex
 */
-int	check_here_doc(int argc, char **argv, t_px *px)
+void	check_here_doc(int argc, char **argv, t_px *px)
 {
 	int	i;
 
-	i = 0;
-	while (i < argc - 1)
+	i = -1;
+	while (++i < argc - 1)
 	{
 		if (argv[i] == 0)
 			ft_error("Empty argument");
-		i++;
 	}
 	if (!ft_strcmp(argv[1], "here_doc") && argc > 5
 		&& check_files(argv[argc -1], 'w'))
 	{
 		px->flag_here_doc = 1;
-		ft_strcpy(px->limit, argv[2]);
-		return (0);
+		px->limit = ft_strdup(argv[2]);
+		px->cmd_number = argc - 4;
+		px->first_cmd = 3;
+		write_here_doc_tmp(px);
 	}
 	else if (px->flag_here_doc == 0 && argc > 4 && check_files(argv[1], 'r')
-		&& checkfiles(argv[argc - 1], 'w'))
+		&& check_files(argv[argc - 1], 'w'))
 	{
-		return (1);
+		px->cmd_number = argc - 3;
+		px->first_cmd = 2;
 	}
 }
 
@@ -49,15 +51,15 @@ int	check_files(char *file, char c)
 {
 	if (c == 'r')
 	{
-		if (access(file, R_OK) == 0)
-			return (1);
+		if (access(file, R_OK))
+			ft_error("Invalid infile");
 	}
 	else if (c == 'w')
 	{
-		if (access(file, W_OK) == 0)
-			return (1);
+		if (access(file, W_OK))
+			ft_error("Invalid outfile");
 	}
-	return (0);
+	return (1);
 }
 
 void	get_env_path(char **env, t_px *px)
@@ -101,6 +103,7 @@ void	ft_alloc_fd(t_px *px)
 	int	i;
 
 	i = 0;
+	//fprintf(stderr, "\ncmd number: %i\n", px->cmd_number);
 	px->fd = malloc(sizeof(int *) * (px->cmd_number - 1));
 	while (i < px->cmd_number - 1)
 	{

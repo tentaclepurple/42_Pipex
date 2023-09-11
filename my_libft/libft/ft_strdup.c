@@ -13,9 +13,9 @@
 #include "libft.h"
 
 /*
-	duplica un string con malloc
+	duplicates a string with malloc
+	returns the string
 */
-
 char	*ft_strdup(const char *str)
 {
 	char	*new;

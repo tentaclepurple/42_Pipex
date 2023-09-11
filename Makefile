@@ -16,7 +16,7 @@ NAME_BONUS = 		pipex_bonus
 
 CC = 				gcc
 
-CFLAGS =			-g3 -Wall -Werror -Wextra -fsanitize=address
+CFLAGS =			-g3 -Wall -Werror -Wextra #-fsanitize=address
 
 LIBFT = 			libft.a
 
@@ -27,6 +27,7 @@ SRC_FILES =			pipex.c \
 SRC_FILES_BONUS = 	pipex_bonus.c \
 					pipex_utils_bonus.c \
 					error_bonus.c \
+					pipex_here_doc_bonus.c \
 					
 INCLUDE = 			pipex.h
 

@@ -28,6 +28,7 @@ typedef struct s_px
 	int		argccpy;
 	int		cmd_number;
 	int		flag_here_doc;
+	int		flag_path_found;
 	char	*limit;
 }	t_px;
 

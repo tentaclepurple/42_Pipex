@@ -6,7 +6,7 @@
 /*   By: imontero <imontero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 08:40:30 by imontero          #+#    #+#             */
-/*   Updated: 2023/09/12 12:39:01 by imontero         ###   ########.fr       */
+/*   Updated: 2023/09/14 13:44:40 by imontero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ typedef struct s_px
 	int		fd[2];
 	int		fd_in;
 	int		fd_out;
+	int		flag_path_found;
 }	t_px;
 
 void	pipex_st(t_px *px, char **argv, char **env);

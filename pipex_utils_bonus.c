@@ -6,7 +6,7 @@
 /*   By: imontero <imontero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/06 18:56:30 by imontero          #+#    #+#             */
-/*   Updated: 2023/09/12 12:07:00 by imontero         ###   ########.fr       */
+/*   Updated: 2023/09/14 13:35:25 by imontero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,20 +80,27 @@ void	ft_execve(t_px *px, char *argv, char **env)
 	int		i;
 	char	**arg_cmd_and_flags;
 	char	*path_and_cmd;
+	char	*aux;
 
 	i = 0;
 	path_and_cmd = NULL;
 	arg_cmd_and_flags = ft_split(argv, ' ');
 	while (px->env_paths[i])
 	{
-		path_and_cmd = ft_strjoin(px->env_paths[i], "/");
-		path_and_cmd = ft_strjoin(path_and_cmd, arg_cmd_and_flags[0]);
+		aux = ft_strjoin(px->env_paths[i++], "/");
+		path_and_cmd = ft_strjoin(aux, arg_cmd_and_flags[0]);
+		free(aux);
 		if (!access(path_and_cmd, F_OK))
-			execve(path_and_cmd, arg_cmd_and_flags, env);
-		i++;
+		{
+			px->flag_path_found = 1;
+			break ;
+		}
+		else
+			free(path_and_cmd);
 	}
+	if (px->flag_path_found == 1)
+		execve(path_and_cmd, arg_cmd_and_flags, env);
 	free_mat(arg_cmd_and_flags);
-	free(path_and_cmd);
 	ft_error_free_exit("Command not found: ", argv, px);
 }
 

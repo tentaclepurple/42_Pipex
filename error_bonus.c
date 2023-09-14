@@ -21,7 +21,6 @@ void	ft_error(char *str)
 
 void	ft_error_free_exit(char *s1, char *s2, t_px *px)
 {
-
 	ft_putstr_fd(s1, 2);
 	ft_putstr_fd(s2, 2);
 	free_mat(px->env_paths);
@@ -49,7 +48,6 @@ void	free_fd(t_px *px)
 	i = 0;
 	while (i < px->cmd_number - 1)
 	{
-		//fprintf(stderr, "freefd  i: %i. cmd num: %i", i, px->cmd_number);
 		free(px->fd[i]);
 		i++;
 	}
@@ -61,7 +59,6 @@ void	ft_close(t_px *px, int j)
 	int	i;
 
 	i = 0;
-
 	while (i < j)
 	{
 		close(px->fd[i][0]);

@@ -40,12 +40,12 @@ void	get_env_path(char **env, t_px *px);
 void	ft_execve(t_px *px, char *argv, char **env);
 int		check_files(char *file, char c);
 void	write_here_doc_tmp(t_px *px);
+char	*getnextline(int fd);
 void	ft_error(char *str);
 void	free_mat(char **mat);
 void	free_fd(t_px *px);
 void	ft_error_free_exit(char *s1, char *s2, t_px *px);
 void	ft_alloc_fd(t_px *px);
 void	ft_close(t_px *px, int j);
-
 
 #endif

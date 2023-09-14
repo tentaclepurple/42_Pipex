@@ -6,7 +6,7 @@
 /*   By: imontero <imontero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 08:40:30 by imontero          #+#    #+#             */
-/*   Updated: 2023/09/08 11:21:13 by imontero         ###   ########.fr       */
+/*   Updated: 2023/09/12 12:39:01 by imontero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,14 @@ typedef struct s_px
 	int		fd_out;
 }	t_px;
 
-void	pipex(t_px *px, char **argv, char **env);
-void	first_child_cmd(t_px *px, char **argv, char **env);
-void	last_child_cmd(t_px *px, char **argv, char **env);
-void	get_env_path(char **env, t_px *px);
-void	ft_execve(t_px *px, char *argv, char **env);
-void	check_files(int argc, char **argv);
-void	ft_error(char *str);
-void	free_mat(char **mat);
-void	ft_error_free_exit(char *str, t_px *px);
+void	pipex_st(t_px *px, char **argv, char **env);
+void	first_child_cmd_st(t_px *px, char **argv, char **env);
+void	last_child_cmd_st(t_px *px, char **argv, char **env);
+void	get_env_path_st(char **env, t_px *px);
+void	ft_execve_st(t_px *px, char *argv, char **env);
+void	check_files_st(int argc, char **argv);
+void	ft_error_st(char *str);
+void	free_mat_st(char **mat);
+void	ft_error_free_exit_st(char *str, t_px *px);
 
 #endif

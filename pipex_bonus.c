@@ -6,7 +6,7 @@
 /*   By: imontero <imontero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/06 15:39:27 by imontero          #+#    #+#             */
-/*   Updated: 2023/09/11 20:06:34 by imontero         ###   ########.fr       */
+/*   Updated: 2023/09/12 12:57:52 by imontero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,12 @@ void	first_child_cmd(t_px *px, char **argv, char **env)
 		ft_error_free_exit("dup error 1", NULL, px);
 	close(px->fd_in);
 	ft_close(px, px->cmd_number - 1);
-	//fprintf(stderr, "arg exec: %s", argv[2]);
 	ft_execve(px, argv[px->first_cmd], env);
 }
 
 void	core_child_cmd(int i, t_px *px, char **argv, char **env)
 {
 	get_env_path(env, px);
-	//fprintf(stderr, "\ni: %i\n", i);
 	if (dup2(px->fd[i - 1][0], STDIN_FILENO) < 0)
 		ft_error_free_exit("dup error 2", NULL, px);
 	if (dup2(px->fd[i][1], STDOUT_FILENO) < 0)
@@ -82,11 +80,13 @@ void	pipex(t_px *px, char **argv, char **env)
 	if (px->flag_here_doc == 1)
 		free(px->limit);
 	free_fd(px);
+	unlink(".tmp");
 }
 
 int	main(int argc, char **argv, char **env)
 {
 	t_px	px;
+
 	ft_bzero(&px, sizeof(struct s_px));
 	px.argccpy = argc;
 	if (argc < 5)
@@ -94,16 +94,5 @@ int	main(int argc, char **argv, char **env)
 	check_here_doc(argc, argv, &px);
 	ft_alloc_fd(&px);
 	pipex(&px, argv, env);
-	
-	/*if (check_here_doc(argc, argv, &px) == 1)
-	{
-		printf("here doc");
-	}
-	else if(check_here_doc(argc, argv, &px) == 0)
-	{
-		printf("pipex");		
-		ft_alloc_fd(&px);
-		pipex(&px, argv, env);
-	}*/
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: imontero <imontero@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 12:32:53 by imontero          #+#    #+#             */
-/*   Updated: 2023/09/13 17:21:33 by imontero         ###   ########.fr       */
+/*   Updated: 2023/09/15 19:31:04 by imontero         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,19 @@
 void	write_here_doc_tmp(t_px *px)
 {
 	char	*line;
+	char	*limit_n;
 
 	px->fd_in = open(".tmp", O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	while (1)
 	{
 		line = getnextline(0);
-		if (ft_strncmp(px->limit, line, ft_strlen(line) - 1) == 0)
+		limit_n = ft_strjoin(px->limit, "\n");
+		if (ft_strcmp(limit_n, line) == 0)
+		{
+			free(limit_n);
 			break ;
+		}
+		free(limit_n);
 		ft_putstr_fd(line, px->fd_in);
 		free(line);
 	}
